@@ -2,12 +2,13 @@ import { FC, ReactNode } from "react";
 import st from './Button.module.css';
 
 interface ButtonProps {
-    children: ReactNode
+    children: ReactNode,
+    onClick: ()=>void
 }
  
-const Button: FC<ButtonProps> = ({children}) => {
+const Button: FC<ButtonProps> = ({children}, props) => {
     return ( 
-        <button className={st['button']}>{children}</button>
+        <button className={st['button']} onClick={props.onClick}>{children}</button>
      );
 }
  
