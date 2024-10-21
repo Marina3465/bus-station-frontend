@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import Search from "../../components/Search/Search";
-import Loading from "../../components/Loading/Loading";
 import Cart from "../../components/Cart/Cart";
+import { format } from "date-fns";
+import Loading from "../../components/Loading/Loading";
 import { useLazyGetRoutesQuery } from "../../store/api/api";
-import Button from "../../components/Button/Button";
 
 interface ScheduleProps {
 
@@ -21,20 +21,29 @@ export interface IRoutes {
 
 const Schedule: FC<ScheduleProps> = () => {
 
-    const [trigger, { data: routes, error, isLoading }] = useLazyGetRoutesQuery();
+    const [getData, { data: routes, error, isLoading }] = useLazyGetRoutesQuery();
+    // const [getStopName, { data: stopName }] = useLazyGetStopIdQuery();
 
-    
-    const searchRoutes = () => {
-        trigger({ start_stop_id: 1, end_stop_id: 11, date: '2024-10-17' });
 
+    const [fromCity, setFromCity] = useState<string>();
+    const [toCity, setToCity] = useState<string>();
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date('2024-10-17'));
+
+    const searchRoutes = () => {            
+            getData({ start_stop_name: 'Краснодар', end_stop_name:'Горячий ключ', date: format(selectedDate, 'yyyy-MM-dd') });      
     }
-
 
     return (
         <>
-            <Search />
-            <Button onClick={searchRoutes}>Найти билеты</Button>
-
+            <Search
+                onClick={searchRoutes}
+                fromCity={fromCity}
+                setFromCity={setFromCity}
+                toCity={toCity}
+                setToCity={setToCity}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+            />
             <Cart />
             {routes?.map((r: IRoutes) => {
                 <div key={r.route_id}>

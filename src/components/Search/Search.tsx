@@ -1,20 +1,31 @@
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import st from './Search.module.css';
 import Input from "../Input/Input";
 import Button from "../Button/Button";
-import InputDate from "../InputDate/InputDate";
 
 interface SearchProps {
+    fromCity: string | undefined;
+    setFromCity: (value: string) => void;
+    toCity: string | undefined;
+    setToCity: (value: string) => void;
+    selectedDate: Date;
+    setSelectedDate: (value: Date) => void;
+    onClick: () => void;
 }
 
 const Search: FC<SearchProps> = (props) => {
 
-
-
-    const searchRoutes = () => {
-        // props.trigger({ start_stop_id: 1, end_stop_id: 11, date: '2024-10-17' });
-
+    const handleGetFrom = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.setFromCity(event.target.value);
     }
+
+    const handleGetTo = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.setToCity(event.target.value);
+    }
+
+    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.setSelectedDate(new Date(event.target.value));
+    };
 
     return (
         <div className={st['conteiner']}>
@@ -22,11 +33,11 @@ const Search: FC<SearchProps> = (props) => {
                 <img className={st['logo']} src="/logo.png" alt="Логотип компании" />
                 <div className={st['search-conteiner']}>
                     <div className={st['inputs']}>
-                        <Input placeholder="Откуда" value="" />
-                        <Input placeholder="Куда" value="" />
-                        <InputDate placeholder="Когда" />
+                        <Input placeholder="Откуда" value={props.fromCity} onChange={handleGetFrom} />
+                        <Input placeholder="Куда" value={props.toCity} onChange={handleGetTo} />
+                        <Input placeholder="Когда" value={props.selectedDate} onChange={handleDateChange} type="date" />
                     </div>
-                    {/* <Button onClick={searchRoutes}>Найти билеты</Button> */}
+                    <Button onClick={props.onClick}>Найти билеты</Button>
                 </div>
             </div>
         </div>
