@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import Search from "../../components/Search/Search";
-import Cart from "../../components/Cart/Cart";
+import Card from "../../components/Card/Card";
 import { format } from "date-fns";
 import Loading from "../../components/Loading/Loading";
 import { useLazyGetRoutesQuery } from "../../store/api/api";
@@ -16,22 +16,24 @@ export interface IRoutes {
     departure: string,
     arrival: string,
     base_price: number,
-    total_price: number
+    total_price: number,
+    capacity: number,
+    sold_tickets: number
 }
 
 const Schedule: FC<ScheduleProps> = () => {
 
-    const [getData, { data: routes, error, isLoading }] = useLazyGetRoutesQuery();
-    // const [getStopName, { data: stopName }] = useLazyGetStopIdQuery();
+    const [getData, { data, error, isLoading }] = useLazyGetRoutesQuery();
 
-
-    const [fromCity, setFromCity] = useState<string>();
+    const [fromCity, setFromCity] = useState<string>('Краснодар');
     const [toCity, setToCity] = useState<string>();
     const [selectedDate, setSelectedDate] = useState<Date>(new Date('2024-10-17'));
 
-    const searchRoutes = () => {            
-            getData({ start_stop_name: 'Краснодар', end_stop_name:'Горячий ключ', date: format(selectedDate, 'yyyy-MM-dd') });      
+    const searchRoutes = () => {
+        if (fromCity && toCity && selectedDate)
+            getData({ start_stop_name: fromCity, end_stop_name: toCity, date: format(selectedDate, 'yyyy-MM-dd') });
     }
+
 
     return (
         <>
@@ -44,12 +46,14 @@ const Schedule: FC<ScheduleProps> = () => {
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
             />
-            <Cart />
-            {routes?.map((r: IRoutes) => {
-                <div key={r.route_id}>
-                    <p>{r.route_name}</p>
-                </div>
-            })}
+            {data?.length ? (
+                data.map((r: IRoutes) => (
+                    <Card key={r.route_id} data={r} />
+                ))
+            ) : (
+                <p>No routes found.</p> // Сообщение, если данных нет
+            )}
+
             {isLoading &&
                 <Loading />
             }

@@ -8,24 +8,16 @@ interface IGetRoutesParametrs {
 }
 
 export const api = createApi({
-    reducerPath: 'api', // Уникальный ключ для идентификации этого среза состояния
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/' }), // Базовый URL для всех запросов
+    reducerPath: 'api',
+    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/' }),
     endpoints: (builder) => ({
         getRoutes: builder.query<IRoutes[], IGetRoutesParametrs>({
             query: (params) => ({
                 url: `routes/`,
                 params: params
             }),
-        }),
-        // getStopId: builder.query<number, string>({
-        //     query: (params) => ({
-        //         url: `stop/`,
-        //         params: params
-        //     }),
-        // })
-
+        })
     }),
 });
 
-// Экспортируем хуки для использования в компонентах
 export const { useLazyGetRoutesQuery } = api;

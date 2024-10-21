@@ -1,0 +1,40 @@
+.card{
+    background: whitesmoke;
+    border: 1px solid gainsboro;
+    margin: 0 100px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 30px;
+}
+
+.card-header{
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+.card-body{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.img{
+    background-image: url('/bus.png');
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-bottom: 1px solid black;
+}
+.button-price{
+    /* display: grid; */
+    text-align: center;
+    gap: 20px;
+}
+
+.header{
+    font-weight: 600;
+}
+
+.departure, .arrival, .button-price{
+    display: grid;
+    gap: 10px;
+}
