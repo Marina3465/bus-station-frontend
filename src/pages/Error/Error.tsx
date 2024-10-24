@@ -9,7 +9,7 @@ interface ErrorProps {
     onClick: () => void
 }
 
-const Error: FC<ErrorProps> = ({ message, onClick, code, status }) => {
+const Error: FC<ErrorProps> = ({ message, onClick, code }) => {
     return (
         <div className={st['error']}>
             <div className={st['content']}>

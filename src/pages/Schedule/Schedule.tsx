@@ -8,12 +8,17 @@ import st from './Schedule.module.css';
 import Error from "../Error/Error";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { SerializedError } from "@reduxjs/toolkit/react";
+import Module from "../../components/Modal/Modal";
+import BuyTicket from "../../components/BuyTicket/BuyTicket";
 
 interface ScheduleProps {
 
 }
+
 export interface IRoutes {
     route_id: number,
+    start_stop_id: number,
+    end_stop_id: number,
     route_name: string,
     start_stop_name: string,
     end_stop_name: string,
@@ -25,7 +30,7 @@ export interface IRoutes {
     sold_tickets: number
 }
 
-const getErrorMessage = (error: FetchBaseQueryError | SerializedError) => {
+export const getErrorMessage = (error: FetchBaseQueryError | SerializedError) => {
     if ('status' in error) {
         const fetchError = error as FetchBaseQueryError;
         return {
@@ -53,6 +58,8 @@ const Schedule: FC<ScheduleProps> = () => {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date('2024-10-17'));
     const [err, setErr] = useState<boolean>(false);
     const [messageErr, setMessageErr] = useState<string>('');
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [selectedRoute, setSelectedRoute] = useState<number | undefined>();
 
     useEffect(() => {
         if (error) {
@@ -70,7 +77,6 @@ const Schedule: FC<ScheduleProps> = () => {
             setErr(true);
         }
     }
-    console.log(error);
 
     return (
         <>
@@ -85,7 +91,11 @@ const Schedule: FC<ScheduleProps> = () => {
             />
             {data?.length ? (
                 data.map((r: IRoutes) => (
-                    <Card key={r.route_id} data={r} />
+                    <Card key={r.route_id} data={r} onClick={
+                        () => {
+                            setOpenModal(true);
+                            setSelectedRoute(r.route_id);
+                        }} />
                 ))
             ) : (
                 <p className={st['message']}>Маршруты не найдены</p>
@@ -97,6 +107,16 @@ const Schedule: FC<ScheduleProps> = () => {
 
             {err &&
                 <Error onClick={() => setErr(false)} message={messageErr} />
+            }
+
+            {(openModal && selectedRoute) &&
+                <Module onClick={() => setOpenModal(false)}>
+                    {data?.length &&
+                        data?.filter((r: IRoutes) => (r.route_id === selectedRoute)).map(filtredRoute => (
+                            <BuyTicket data={filtredRoute} key={filtredRoute.route_id}/>
+                        ))
+                    }
+                </Module>
             }
         </>
     );

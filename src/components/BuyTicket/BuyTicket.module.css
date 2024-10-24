@@ -1,0 +1,30 @@
+.route-name {
+    display: flex;
+    gap: 20px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 50px 300px 150px;
+    grid-template-rows: 50px;
+    margin-bottom: 50px;
+}
+
+.from,
+.to {
+    font-weight: 700;
+}
+
+.baggage {
+    display: flex;
+    justify-items: center;
+    gap: 10px;
+    margin-bottom: 50px;
+
+}
+
+.btn-pay {
+    margin-top: 20px;
+}

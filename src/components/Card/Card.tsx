@@ -5,7 +5,8 @@ import Button from "../Button/Button";
 import { differenceInMinutes, format, parseISO } from "date-fns";
 
 interface CardProps {
-    data: IRoutes
+    data: IRoutes,
+    onClick: () => void
 }
 
 const Card: FC<CardProps> = (props) => {
@@ -41,7 +42,7 @@ const Card: FC<CardProps> = (props) => {
                 <div className={st['button-price']}>
                     <p className={st['header']}>Цена {props.data.total_price} ₽</p>
                     <p >Осталось мест: {props.data.capacity - props.data.sold_tickets}</p>
-                    <Button>Купить билет</Button>
+                    <Button onClick={props.onClick}>Купить билет</Button>
                 </div>
             </div>
 
