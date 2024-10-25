@@ -1,19 +1,19 @@
-import { FC, ReactNode } from "react";
-import st from './Payment.module.css';
+import { FC } from "react";
+import st from './Success.module.css';
 
-interface PaymentProps {
+interface SuccessProps {
     onClick: () => void
 }
 
-const Payment: FC<PaymentProps> = ({ onClick }) => {
+const Success: FC<SuccessProps> = ({ onClick }) => {
     return (
         <div className={st['module-bg']}>
             <div className={st['module']}>
                 <button onClick={onClick} className={st['btn-close']}><img src="/close.png" alt="Кнопка закрыть" /></button>
-                <div>Оплата прошла успешно</div>
+                <div>Успешно</div>
             </div>
         </div>
     );
 }
 
-export default Payment;
+export default Success;

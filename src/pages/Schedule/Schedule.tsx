@@ -10,6 +10,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { SerializedError } from "@reduxjs/toolkit/react";
 import Module from "../../components/Modal/Modal";
 import BuyTicket from "../../components/BuyTicket/BuyTicket";
+import Header from "../../components/Header/Header";
 
 interface ScheduleProps {
 
@@ -80,6 +81,7 @@ const Schedule: FC<ScheduleProps> = () => {
 
     return (
         <>
+            <Header />
             <Search
                 onClick={searchRoutes}
                 fromCity={fromCity}
@@ -113,7 +115,7 @@ const Schedule: FC<ScheduleProps> = () => {
                 <Module onClick={() => setOpenModal(false)}>
                     {data?.length &&
                         data?.filter((r: IRoutes) => (r.route_id === selectedRoute)).map(filtredRoute => (
-                            <BuyTicket data={filtredRoute} key={filtredRoute.route_id}/>
+                            <BuyTicket data={filtredRoute} key={filtredRoute.route_id} />
                         ))
                     }
                 </Module>

@@ -1,0 +1,13 @@
+.btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn img {
+    width: 25px;
+}
+
+.btn-add{
+    margin: 50px;
+}

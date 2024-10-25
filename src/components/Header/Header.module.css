@@ -1,0 +1,32 @@
+.header {
+    width: 100%;
+    background-color: black;
+    padding: 20px 40px;
+}
+
+.links {
+    display: flex;
+    list-style-type: none;
+}
+
+.link:link,
+.link:active,
+.link:visited {
+    padding: 0 20px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.link.active:link,
+.link.active:active,
+.link.active:visited {
+    padding: 0 20px;
+    color: yellow;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.link:hover {
+    color: yellow;
+}

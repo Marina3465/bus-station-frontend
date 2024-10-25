@@ -3,7 +3,7 @@ import { getErrorMessage, IRoutes } from "../../pages/Schedule/Schedule";
 import st from './BuyTicket.module.css';
 import { format } from "date-fns";
 import Button from "../Button/Button";
-import Payment from "../Payment/Payment";
+import Success from "../Success/Success";
 import { useAddTicketMutation } from "../../store/api/api";
 import Loading from "../Loading/Loading";
 import Error from "../../pages/Error/Error";
@@ -76,7 +76,7 @@ const BuyTicket: FC<BuyTicketProps> = (props) => {
                 </div>
             </div>
             {cash &&
-                <Payment onClick={() => setCash(false)} />
+                <Success onClick={() => setCash(false)} />
             }
             {isLoading &&
                 <Loading />
