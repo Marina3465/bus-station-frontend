@@ -1,83 +1,81 @@
 import { FC, useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
-import { useAddDriverMutation, useDeleteDriverMutation, useLazyGetDriversQuery, useUpdateDriverMutation } from "../../store/api/api";
-import st from './Drivers.module.css';
+import { useAddStopMutation, useDeleteStopMutation, useLazyGetStopsQuery, useUpdateStopMutation } from "../../store/api/api";
 import Loading from "../../components/Loading/Loading";
-import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
-import Modal from "../../components/Modal/Modal";
 import Error from "../Error/Error";
+import Modal from "../../components/Modal/Modal";
+import Input from "../../components/Input/Input";
+import Button from "../../components/Button/Button";
 import Success from "../../components/Success/Success";
 
-interface DriversProps {
+interface StopsProps {
 
 }
 
-const Drivers: FC<DriversProps> = () => {
-    const [getDrivers, { data: driversData, isLoading: isLoadingDrivers }] = useLazyGetDriversQuery();
-    const [addDriver] = useAddDriverMutation();
-    const [updateDriver] = useUpdateDriverMutation();
-    const [deleteDriver] = useDeleteDriverMutation();
+const Stops: FC<StopsProps> = () => {
+    const [getStops, { data: stopsData, error, isLoading: isLoadingStops }] = useLazyGetStopsQuery();
+    const [addStop] = useAddStopMutation();
+    const [updateStop] = useUpdateStopMutation();
+    const [deleteStop] = useDeleteStopMutation();
 
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [openEdit, setOpenEdit] = useState<boolean>(false);
     const [id, setId] = useState<number>();
 
-    const [nameDriver, setNameDriver] = useState<string>('');
-    const [nameEditDriver, setNameEditDriver] = useState<string>('');
+    const [nameStop, setNameStop] = useState<string>('');
+    const [nameEditStop, setNameEditStop] = useState<string>('');
 
     const [err, setErr] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean>(false);
 
     const [messageErr, setMessageErr] = useState<string>('');
 
-
-    useEffect(() => {
+   useEffect(() => {
         try {
-            getDrivers();
+            getStops();
         } catch (error) {
-            console.error("Ошибка при получении водителя:", error);
-            setMessageErr('Ошибка при получении водителя.');
+            console.error("Ошибка при получении остановки:", error);
+            setMessageErr('Ошибка при получении остановки.');
             setErr(true);
         }
     }, [])
 
     const save = () => {
-        if (nameDriver !== '') {
+        if (nameStop !== '') {
             try {
-                addDriver({ name: nameDriver }).unwrap();
+                addStop({ name: nameStop }).unwrap();
 
                 setSuccess(true);
-                setNameDriver('');
+                setNameStop('');
 
-                getDrivers();
+                getStops();
             } catch (error) {
-                console.error("Ошибка при добавлении водителя:", error);
-                setMessageErr('Ошибка при добавлении водителя.');
+                console.error("Ошибка при добавлении остановки:", error);
+                setMessageErr('Ошибка при добавлении остановки.');
                 setErr(true);
             }
         } else {
-            setMessageErr('Кажется, вы забыли заполнить ФИО водителя!');
+            setMessageErr('Кажется, вы забыли заполнить назавание остановки!');
             setErr(true);
         }
     };
 
     const saveEdit = () => {
-        if (nameEditDriver !== '' && id) {
+        if (nameEditStop !== '' && id) {
             try {
-                updateDriver({id_driver: id, name: nameEditDriver}).unwrap();
+                updateStop({id_stop: id, name: nameEditStop}).unwrap();
 
                 setSuccess(true);
-                setNameEditDriver('');
+                setNameEditStop('');
 
-                getDrivers();
+                getStops();
             } catch (error) {
-                console.error("Ошибка при изменении водителя:", error);
-                setMessageErr('Ошибка при изменении водителя.');
+                console.error("Ошибка при изменении остановки:", error);
+                setMessageErr('Ошибка при изменении остановки.');
                 setErr(true);
             }
         } else {
-            setMessageErr('Кажется, вы забыли заполнить ФИО водителя!');
+            setMessageErr('Кажется, вы забыли заполнить назавание остановки!');
             setErr(true);
         }
     }
@@ -85,13 +83,13 @@ const Drivers: FC<DriversProps> = () => {
     const handleDelete = (id: number) => {
         if (id) {
             try {
-                deleteDriver({id_driver: id}).unwrap();
+                deleteStop({id_stop: id}).unwrap();
 
                 setSuccess(true);
-                getDrivers();
+                getStops();
             } catch (error) {
-                console.error("Ошибка при удалении водителя:", error);
-                setMessageErr('Ошибка при удалении водителя.');
+                console.error("Ошибка при удалении остановки:", error);
+                setMessageErr('Ошибка при удалении остановки.');
                 setErr(true);
             }
         } 
@@ -101,7 +99,7 @@ const Drivers: FC<DriversProps> = () => {
         <>
             <Header />
             <div className='btn-add'>
-                <Button onClick={() => setOpenAdd(true)}>Добавить водителя</Button>
+                <Button onClick={() => setOpenAdd(true)}>Добавить остановку</Button>
             </div>
             <table>
                 <thead>
@@ -112,17 +110,17 @@ const Drivers: FC<DriversProps> = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {driversData?.length ? (
-                        driversData.map((r) => (
-                            <tr key={r.id_driver}>
+                    {stopsData?.length ? (
+                        stopsData.map((r) => (
+                            <tr key={r.id_stop}>
                                 <td>{r.name}</td>
                                 <td className="table-btn">
-                                    <button className='btn' onClick={() => { setId(r.id_driver); setNameEditDriver(r.name); setOpenEdit(true) }}>
+                                    <button className='btn' onClick={() => { setId(r.id_stop); setNameEditStop(r.name); setOpenEdit(true) }}>
                                         <img src="/edit.png" alt="Кнопка редактировать" />
                                     </button>
                                 </td>
                                 <td className="table-btn">
-                                    <button className='btn' onClick={() => handleDelete(r.id_driver)}>
+                                    <button className='btn' onClick={() => handleDelete(r.id_stop)}>
                                         <img src="/delete.png" alt="Кнопка удалить" />
 
                                     </button>
@@ -136,7 +134,7 @@ const Drivers: FC<DriversProps> = () => {
                     )}
                 </tbody>
             </table>
-            {(isLoadingDrivers) &&
+            {(isLoadingStops) &&
                 <Loading />
             }
             {err &&
@@ -144,14 +142,14 @@ const Drivers: FC<DriversProps> = () => {
             }
             {openAdd &&
                 <Modal onClick={() => setOpenAdd(false)}>
-                    <Input placeholder="ФИО водителя" value={nameDriver} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameDriver(e.target.value)} />
+                    <Input placeholder="Название остановки" value={nameStop} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameStop(e.target.value)} />
                     <div style={{ marginBottom: '20px' }}></div>
                     <Button onClick={save}>Сохранить</Button>
                 </Modal>
             }
             {openEdit &&
                 <Modal onClick={() => setOpenEdit(false)}>
-                    <Input placeholder="ФИО водителя" value={nameEditDriver} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameEditDriver(e.target.value)} />
+                    <Input placeholder="Название остановки" value={nameEditStop} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameEditStop(e.target.value)} />
                     <div style={{ marginBottom: '20px' }}></div>
                     <Button onClick={saveEdit}>Сохранить</Button>
                 </Modal>
@@ -164,4 +162,4 @@ const Drivers: FC<DriversProps> = () => {
     );
 }
 
-export default Drivers;
+export default Stops;

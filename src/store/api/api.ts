@@ -77,11 +77,39 @@ export const api = createApi({
                 body: { name: driver.name },
             }),
         }),
+        //удаление водителя
         deleteDriver: builder.mutation<void, { id_driver: number }>({
             query: (driver) => ({
                 url: `deleteDriver/${driver.id_driver}`,
                 method: 'DELETE',
             }),
+        }),
+         //добавление остановки
+         addStop: builder.mutation<void, {name: string}>({
+            query: (stop) => ({
+                url: 'addStop',
+                method: 'POST',
+                body: stop,
+            }),
+        }),
+        //изменение остановки
+        updateStop: builder.mutation<void, { id_stop: number; name: string }>({
+            query: (stop) => ({
+                url: `updateStop/${stop.id_stop}`,
+                method: 'PUT',
+                body: { name: stop.name },
+            }),
+        }),
+        //удаление остановки
+        deleteStop: builder.mutation<void, { id_stop: number }>({
+            query: (stop) => ({
+                url: `deleteStop/${stop.id_stop}`,
+                method: 'DELETE',
+            }),
+        }),
+        //получение остановок
+        getStops: builder.query<{id_stop: number, name: string}[], void>({
+            query: () => 'stops'
         }),
         //получение билетов
         getTickets: builder.query<ITickets[], void>({
@@ -90,6 +118,6 @@ export const api = createApi({
     }),
 });
 
-export const { useLazyGetRoutesQuery, useAddTicketMutation, useLazyGetDriversQuery, useAddDriverMutation, useUpdateDriverMutation, 
-    useDeleteDriverMutation,
+export const { useLazyGetRoutesQuery, useAddTicketMutation, useLazyGetDriversQuery, useAddDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation,
+    useLazyGetStopsQuery, useAddStopMutation, useUpdateStopMutation, useDeleteStopMutation,
     useLazyGetTicketsQuery } = api;

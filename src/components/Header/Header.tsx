@@ -19,7 +19,7 @@ const Header: FC<HeaderProps> = () => {
                     <NavLink to={'/drivers'} className={({ isActive }) => `${st.link} ${isActive ? st.active : ''}`}>Водители</NavLink>
                     <NavLink to={'/'} className={({ isActive }) => `${st.link} ${isActive ? st.active : ''}`}>Автобусы</NavLink>
                     <NavLink to={'/'} className={({ isActive }) => `${st.link} ${isActive ? st.active : ''}`}>Маршруты</NavLink>
-                    <NavLink to={'/'} className={({ isActive }) => `${st.link} ${isActive ? st.active : ''}`}>Остановки</NavLink>
+                    <NavLink to={'/stops'} className={({ isActive }) => `${st.link} ${isActive ? st.active : ''}`}>Остановки</NavLink>
                     <NavLink to={'/tickets'} className={({ isActive }) => `${st.link} ${isActive ? st.active : ''}`}>Билеты</NavLink>
                 </ul>
             </menu>
