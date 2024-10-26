@@ -84,6 +84,10 @@ export const api = createApi({
                 method: 'DELETE',
             }),
         }),
+         //получение остановок
+         getStops: builder.query<{id_stop: number, name: string}[], void>({
+            query: () => 'stops'
+        }),
          //добавление остановки
          addStop: builder.mutation<void, {name: string}>({
             query: (stop) => ({
@@ -107,9 +111,32 @@ export const api = createApi({
                 method: 'DELETE',
             }),
         }),
-        //получение остановок
-        getStops: builder.query<{id_stop: number, name: string}[], void>({
-            query: () => 'stops'
+        //получение автобусов
+        getBuses: builder.query<{id_bus: number; bus_number: string; capacity: number; driver_id: number, driver_name: string}[], void>({
+            query: () => 'buses'
+        }),
+        //добавление автобуса
+        addBus: builder.mutation<void, {bus_number: string; capacity:number; driver_name:number}>({
+            query: (bus) => ({
+                url: 'addBus',
+                method: 'POST',
+                body: bus,
+            }),
+        }),
+        //изменение автобуса
+        updateBus: builder.mutation<void, { id_bus: number; bus_number:string; capacity: number; driver_name: number }>({
+            query: (bus) => ({
+                url: `updateBus/${bus.id_bus}`,
+                method: 'PUT',
+                body: { bus_number: bus.bus_number, capacity: bus.capacity, driver_name:bus.driver_name },
+            }),
+        }),
+         //удаление автобуса
+         deleteBus: builder.mutation<void, { id_bus: number }>({
+            query: (bus) => ({
+                url: `deleteBus/${bus.id_bus}`,
+                method: 'DELETE',
+            }),
         }),
         //получение билетов
         getTickets: builder.query<ITickets[], void>({
@@ -120,4 +147,5 @@ export const api = createApi({
 
 export const { useLazyGetRoutesQuery, useAddTicketMutation, useLazyGetDriversQuery, useAddDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation,
     useLazyGetStopsQuery, useAddStopMutation, useUpdateStopMutation, useDeleteStopMutation,
+    useLazyGetBusesQuery, useAddBusMutation, useUpdateBusMutation, useDeleteBusMutation,
     useLazyGetTicketsQuery } = api;

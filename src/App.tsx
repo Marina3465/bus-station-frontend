@@ -4,6 +4,7 @@ import Schedule from './pages/Schedule/Schedule';
 import Drivers from './pages/Drivers/Drivers';
 import Tickets from './pages/Tickets/Tickets';
 import Stops from './pages/Stops/Stops';
+import Buses from './pages/Buses/Buses';
 
 
 function App() {
@@ -24,6 +25,10 @@ function App() {
     {
       path: '/stops',
       element: <Stops />
+    },
+    {
+      path: '/buses',
+      element: <Buses />
     }
   ])
   return (
