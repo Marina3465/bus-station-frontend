@@ -166,7 +166,7 @@ const Buses: FC<BusesProps> = () => {
                 <Modal onClick={() => setOpenAdd(false)}>
                     <div className={st['modal-content']}>
                         <Input placeholder="Номер автобуса" value={numberBus} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNumberBus(e.target.value)} />
-                        <Input placeholder="Вместимость" type="number" value={capacityBus} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCapacityBus(Number(e.target.value))} />
+                        <Input placeholder="Вместимость" type="number" value={String(capacityBus)} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCapacityBus(Number(e.target.value))} />
                         <select value={selectedDriver} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedDriver(Number(e.target.value))}>
                         <option key={-1}>Выберите водителя</option>
                             {driversData?.length &&
@@ -184,7 +184,7 @@ const Buses: FC<BusesProps> = () => {
                 <Modal onClick={() => setOpenEdit(false)}>
                     <div className={st['modal-content']}>
                         <Input placeholder="Номер автобуса" value={numberEditBus} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNumberEditBus(e.target.value)} />
-                        <Input placeholder="Вместимость" type="number" value={capacityEditBus} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCapacityEditBus(Number(e.target.value))} />
+                        <Input placeholder="Вместимость" type="number" value={String(capacityEditBus)} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCapacityEditBus(Number(e.target.value))} />
                         <select value={selectedEditDriver} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedEditDriver(Number(e.target.value))}>
                         <option key={-1}>Выберите водителя</option>
                             {driversData?.length &&

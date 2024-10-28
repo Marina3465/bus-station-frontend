@@ -5,6 +5,7 @@ import Drivers from './pages/Drivers/Drivers';
 import Tickets from './pages/Tickets/Tickets';
 import Stops from './pages/Stops/Stops';
 import Buses from './pages/Buses/Buses';
+import Routes from './pages/Routes/Routes';
 
 
 function App() {
@@ -29,10 +30,14 @@ function App() {
     {
       path: '/buses',
       element: <Buses />
+    },
+    {
+      path: '/routes',
+      element: <Routes />
     }
   ])
   return (
-      <RouterProvider router={router} />
+    <RouterProvider router={router} />
   )
 }
 

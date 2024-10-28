@@ -24,6 +24,14 @@ interface IDriverName {
     name: string
 }
 
+interface IRoutesStops {
+    id_route: number,
+    route_name: string,
+    bus_number: string,
+    standard_price: number,
+    stops_list: string
+}
+
 interface ITickets {
     id_ticket: number
     id_route: number
@@ -84,12 +92,12 @@ export const api = createApi({
                 method: 'DELETE',
             }),
         }),
-         //получение остановок
-         getStops: builder.query<{id_stop: number, name: string}[], void>({
+        //получение остановок
+        getStops: builder.query<{ id_stop: number, name: string }[], void>({
             query: () => 'stops'
         }),
-         //добавление остановки
-         addStop: builder.mutation<void, {name: string}>({
+        //добавление остановки
+        addStop: builder.mutation<void, { name: string }>({
             query: (stop) => ({
                 url: 'addStop',
                 method: 'POST',
@@ -112,11 +120,11 @@ export const api = createApi({
             }),
         }),
         //получение автобусов
-        getBuses: builder.query<{id_bus: number; bus_number: string; capacity: number; driver_id: number, driver_name: string}[], void>({
+        getBuses: builder.query<{ id_bus: number; bus_number: string; capacity: number; driver_id: number, driver_name: string }[], void>({
             query: () => 'buses'
         }),
         //добавление автобуса
-        addBus: builder.mutation<void, {bus_number: string; capacity:number; driver_name:number}>({
+        addBus: builder.mutation<void, { bus_number: string; capacity: number; driver_name: number }>({
             query: (bus) => ({
                 url: 'addBus',
                 method: 'POST',
@@ -124,19 +132,23 @@ export const api = createApi({
             }),
         }),
         //изменение автобуса
-        updateBus: builder.mutation<void, { id_bus: number; bus_number:string; capacity: number; driver_name: number }>({
+        updateBus: builder.mutation<void, { id_bus: number; bus_number: string; capacity: number; driver_name: number }>({
             query: (bus) => ({
                 url: `updateBus/${bus.id_bus}`,
                 method: 'PUT',
-                body: { bus_number: bus.bus_number, capacity: bus.capacity, driver_name:bus.driver_name },
+                body: { bus_number: bus.bus_number, capacity: bus.capacity, driver_name: bus.driver_name },
             }),
         }),
-         //удаление автобуса
-         deleteBus: builder.mutation<void, { id_bus: number }>({
+        //удаление автобуса
+        deleteBus: builder.mutation<void, { id_bus: number }>({
             query: (bus) => ({
                 url: `deleteBus/${bus.id_bus}`,
                 method: 'DELETE',
             }),
+        }),
+        //получение билетов
+        getRoutesStops: builder.query<IRoutesStops[], void>({
+            query: () => 'routes-stops'
         }),
         //получение билетов
         getTickets: builder.query<ITickets[], void>({
@@ -148,4 +160,5 @@ export const api = createApi({
 export const { useLazyGetRoutesQuery, useAddTicketMutation, useLazyGetDriversQuery, useAddDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation,
     useLazyGetStopsQuery, useAddStopMutation, useUpdateStopMutation, useDeleteStopMutation,
     useLazyGetBusesQuery, useAddBusMutation, useUpdateBusMutation, useDeleteBusMutation,
+    useLazyGetRoutesStopsQuery,
     useLazyGetTicketsQuery } = api;

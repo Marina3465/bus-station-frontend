@@ -104,7 +104,7 @@ const Stops: FC<StopsProps> = () => {
             <table>
                 <thead>
                     <tr>
-                        <th>ФИО водителей</th>
+                        <th>Название остановки</th>
                         <th>Изменить</th>
                         <th>Удалить</th>
                     </tr>

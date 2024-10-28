@@ -31,7 +31,7 @@ td {
   border: 3px solid #ffffff;
 }
 
-.table-btn{
+.table-btn {
   text-align: center;
 }
 
@@ -45,16 +45,28 @@ td {
   width: 25px;
 }
 
-.btn-add{
+.btn-add {
   margin: 50px;
 }
 
-select{
-    width: 300px;
-    padding: 10px 20px;
-    color: black;
-    background-color: whitesmoke;
-    border: 2px solid grey;
-    border-radius: 50px;
-    outline: none;
+select {
+  width: 300px;
+  padding: 10px 20px;
+  color: black;
+  background-color: whitesmoke;
+  border: 2px solid grey;
+  border-radius: 50px;
+  outline: none;
+}
+
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0;
+}
+
+h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 10px 0;
 }

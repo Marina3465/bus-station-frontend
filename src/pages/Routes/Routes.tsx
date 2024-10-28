@@ -1,0 +1,233 @@
+import { FC, useEffect, useState } from "react";
+import Header from "../../components/Header/Header";
+import Button from "../../components/Button/Button";
+import Loading from "../../components/Loading/Loading";
+import Modal from "../../components/Modal/Modal";
+import Input from "../../components/Input/Input";
+import Success from "../../components/Success/Success";
+import Error from "../Error/Error";
+import { useLazyGetBusesQuery, useLazyGetRoutesStopsQuery, useLazyGetStopsQuery } from "../../store/api/api";
+import st from './Routes.module.css';
+
+interface RoutesProps {
+
+}
+
+interface StopType {
+    stop_id: number;
+    stop_order: number;
+    additional_price: number;
+    departure: string;
+    arrival: string;
+}
+
+const Routes: FC<RoutesProps> = () => {
+    const [getRoutes, { data: routesData, error, isLoading: isLoadingStops }] = useLazyGetRoutesStopsQuery();
+    const [getBuses, { data: busesData }] = useLazyGetBusesQuery();
+    const [getStops, { data: stopsData }] = useLazyGetStopsQuery();
+    // const [addStop] = useAddStopMutation();
+    // const [deleteStop] = useDeleteStopMutation();
+
+    const [openAdd, setOpenAdd] = useState<boolean>(false);
+
+    const [nameRoute, setNameRoute] = useState<string>('');
+    const [price, setPrice] = useState<number>();
+    const [bus, setBus] = useState<number>();
+
+    const [err, setErr] = useState<boolean>(false);
+    const [success, setSuccess] = useState<boolean>(false);
+
+    const [messageErr, setMessageErr] = useState<string>('');
+    const [stops, setStops] = useState<StopType[]>([{ stop_id: -1, stop_order: -1, additional_price: 0, departure: '', arrival: '' }]);
+
+    useEffect(() => {
+        try {
+            getRoutes();
+            getBuses();
+            getStops();
+        } catch (error) {
+            console.error("Ошибка при получении маршрутов:", error);
+            setMessageErr('Ошибка при получении маршрутов.');
+            setErr(true);
+        }
+    }, [])
+
+    const addStopBlock = () => {
+        setStops([...stops, { stop_id: -1, stop_order: -1, additional_price: 0, departure: '', arrival: '' }]);
+    };
+
+    const handleStopChange = (index: number, field: keyof StopType, value: string | number) => {
+        const newStops: StopType[] = [...stops];
+        newStops[index][field] = value;
+        setStops(newStops);
+    };
+console.log(stops);
+    const save = () => {
+        if (nameStop !== '') {
+            try {
+                addStop({ name: nameStop }).unwrap();
+
+                setSuccess(true);
+                setNameStop('');
+
+                getStops();
+            } catch (error) {
+                console.error("Ошибка при добавлении маршрутов:", error);
+                setMessageErr('Ошибка при добавлении маршрутов.');
+                setErr(true);
+            }
+        } else {
+            setMessageErr('Кажется, вы забыли заполнить назавание остановки!');
+            setErr(true);
+        }
+    };
+
+    const handleDelete = (id: number) => {
+        if (id) {
+            try {
+                deleteStop({ id_stop: id }).unwrap();
+
+                setSuccess(true);
+                getStops();
+            } catch (error) {
+                console.error("Ошибка при удалении остановки:", error);
+                setMessageErr('Ошибка при удалении остановки.');
+                setErr(true);
+            }
+        }
+    }
+
+    return (
+        <>
+            <Header />
+            <div className='btn-add'>
+                <Button onClick={() => setOpenAdd(true)}>Добавить маршрут</Button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Маршрут</th>
+                        <th>Номер <br />автобуса</th>
+                        <th>Установочная <br />цена</th>
+                        <th>Список остановок</th>
+                        <th>Удалить</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {routesData?.length ? (
+                        routesData.map((r) => (
+                            <tr key={r.id_route}>
+                                <td>{r.id_route}</td>
+                                <td>{r.route_name}</td>
+                                <td>{r.bus_number}</td>
+                                <td>{r.standard_price}</td>
+                                <td>{r.stops_list}</td>
+
+                                <td className="table-btn">
+                                    <button className='btn' onClick={() => handleDelete(r.id_route)}>
+                                        <img src="/delete.png" alt="Кнопка удалить" />
+
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={6}>Нет данных</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+            {(isLoadingStops) &&
+                <Loading />
+            }
+            {err &&
+                <Error onClick={() => setErr(false)} message={messageErr} />
+            }
+            {openAdd &&
+                <Modal onClick={() => setOpenAdd(false)}>
+                    <div className={st['cols']}>
+                        <div className={st['col1']}>
+                            <h1>Основная информация</h1>
+                            <Input placeholder="Название маршрута" value={nameRoute} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameRoute(e.target.value)} />
+                            <select value={bus} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBus(Number(e.target.value))} name="" id="">
+                                <option key={-1} value={-1}>Выберите автобус</option>
+                                {busesData?.length &&
+                                    busesData.map(r =>
+                                        <option key={r.id_bus} value={r.id_bus}>{r.bus_number}</option>
+                                    )
+                                }
+                            </select>
+                            <Input placeholder="Установочная цена" type="number" value={String(price)} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPrice(Number(e.target.value))} />
+                        </div>
+                        <div className={st['col2']}>
+                            <h1>Создание остановок</h1>
+                            {stops.map((stopBlock, index) => (
+                                <div key={index} className={st['block-stop']}>
+                                    <h2>Остановка</h2>
+                                    <select
+                                        value={stopBlock.stop_id}
+                                        onChange={(e) => handleStopChange(index, 'stop_id', Number(e.target.value))}
+                                    >
+                                        <option value={-1}>Выберите остановку</option>
+                                        {stopsData?.length &&
+                                            stopsData.map((r) => (
+                                                <option key={r.id_stop} value={r.id_stop}>{r.name}</option>
+                                            ))
+                                        }
+                                    </select>
+
+                                    <Input
+                                        placeholder="Номер остановки"
+                                        type="number"
+                                        value={String(stopBlock.stop_order)}
+                                        onChange={(e) => handleStopChange(index, 'stop_order', Number(e.target.value))}
+                                    />
+
+                                    <Input
+                                        placeholder="Добавочная цена"
+                                        type="number"
+                                        value={String(stopBlock.additional_price)}
+                                        onChange={(e) => handleStopChange(index, 'additional_price', Number(e.target.value))}
+                                    />
+
+                                    <label htmlFor={`departure-${index}`}>Дата отправления</label>
+                                    <Input
+                                        type="datetime-local"
+                                        id={`departure-${index}`}
+                                        placeholder="Дата отправления"
+                                        value={stopBlock.departure}
+                                        onChange={(e) => handleStopChange(index, 'departure', e.target.value)}
+                                    />
+
+                                    <label htmlFor={`arrival-${index}`}>Дата прибытия</label>
+                                    <Input
+                                        type="datetime-local"
+                                        id={`arrival-${index}`}
+                                        placeholder="Дата прибытия"
+                                        value={stopBlock.arrival}
+                                        onChange={(e) => handleStopChange(index, 'arrival', e.target.value)}
+                                    />
+                                </div>
+                            ))}
+
+                            <Button onClick={addStopBlock}>Добавить остановку</Button>
+                        </div>
+
+                    </div>
+
+
+                    <div style={{ marginBottom: '20px' }}></div>
+                    <Button onClick={save}>Сохранить</Button>
+                </Modal>
+            }
+
+            {success &&
+                <Success onClick={() => setSuccess(false)} />
+            }
+        </>
+    );
+}
+
+export default Routes;
