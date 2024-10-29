@@ -6,7 +6,7 @@ import Modal from "../../components/Modal/Modal";
 import Input from "../../components/Input/Input";
 import Success from "../../components/Success/Success";
 import Error from "../Error/Error";
-import { useLazyGetBusesQuery, useLazyGetRoutesStopsQuery, useLazyGetStopsQuery } from "../../store/api/api";
+import { useAddRouteMutation, useAddRouteStopsMutation, useDeleteRoutesMutation, useLazyGetBusesQuery, useLazyGetRoutesStopsQuery, useLazyGetStopsQuery } from "../../store/api/api";
 import st from './Routes.module.css';
 
 interface RoutesProps {
@@ -25,8 +25,10 @@ const Routes: FC<RoutesProps> = () => {
     const [getRoutes, { data: routesData, error, isLoading: isLoadingStops }] = useLazyGetRoutesStopsQuery();
     const [getBuses, { data: busesData }] = useLazyGetBusesQuery();
     const [getStops, { data: stopsData }] = useLazyGetStopsQuery();
-    // const [addStop] = useAddStopMutation();
-    // const [deleteStop] = useDeleteStopMutation();
+    const [addRoute] = useAddRouteMutation();
+    const [addRouteStops] = useAddRouteStopsMutation();
+
+    const [deleteRoutes] = useDeleteRoutesMutation();
 
     const [openAdd, setOpenAdd] = useState<boolean>(false);
 
@@ -38,7 +40,7 @@ const Routes: FC<RoutesProps> = () => {
     const [success, setSuccess] = useState<boolean>(false);
 
     const [messageErr, setMessageErr] = useState<string>('');
-    const [stops, setStops] = useState<StopType[]>([{ stop_id: -1, stop_order: -1, additional_price: 0, departure: '', arrival: '' }]);
+    const [stops, setStops] = useState<StopType[]>([{ stop_id: -1, stop_order: 0, additional_price: 0, departure: '', arrival: '' }]);
 
     useEffect(() => {
         try {
@@ -53,7 +55,7 @@ const Routes: FC<RoutesProps> = () => {
     }, [])
 
     const addStopBlock = () => {
-        setStops([...stops, { stop_id: -1, stop_order: -1, additional_price: 0, departure: '', arrival: '' }]);
+        setStops([...stops, { stop_id: -1, stop_order: 0, additional_price: 0, departure: '', arrival: '' }]);
     };
 
     const handleStopChange = (index: number, field: keyof StopType, value: string | number) => {
@@ -61,14 +63,31 @@ const Routes: FC<RoutesProps> = () => {
         newStops[index][field] = value;
         setStops(newStops);
     };
-console.log(stops);
-    const save = () => {
-        if (nameStop !== '') {
-            try {
-                addStop({ name: nameStop }).unwrap();
+    console.log(stops);
 
+    const checkStops = () => {
+        return stops.every(r => 
+            r.stop_id !== -1 && 
+            r.additional_price != null && // допускает значение 0
+            r.arrival !== "" && 
+            r.departure !== "" && 
+            r.stop_order != null // учитывает 0 как допустимое значение
+        );
+    };
+    
+    
+    const save = () => {
+        if (nameRoute !== '' && price && bus && checkStops()) {
+
+            try {
+                addRoute({ name: nameRoute, bus_id: bus, standard_price: price }).then((result) => {
+                    addRouteStops({ route_id: result.data, stops: stops })
+                });
+                getRoutes();
                 setSuccess(true);
-                setNameStop('');
+                setNameRoute('');
+                setBus(0);
+                setPrice(0);
 
                 getStops();
             } catch (error) {
@@ -77,7 +96,7 @@ console.log(stops);
                 setErr(true);
             }
         } else {
-            setMessageErr('Кажется, вы забыли заполнить назавание остановки!');
+            setMessageErr('Кажется, вы забыли заполнить все нужные поля!');
             setErr(true);
         }
     };
@@ -85,8 +104,8 @@ console.log(stops);
     const handleDelete = (id: number) => {
         if (id) {
             try {
-                deleteStop({ id_stop: id }).unwrap();
-
+                deleteRoutes({ id_route: id }).unwrap();
+                getRoutes();
                 setSuccess(true);
                 getStops();
             } catch (error) {
@@ -178,16 +197,22 @@ console.log(stops);
                                         }
                                     </select>
 
+                                    <label htmlFor={`stop_order`}>Номер остановки</label>
+
                                     <Input
                                         placeholder="Номер остановки"
                                         type="number"
+                                        id="stop_order"
                                         value={String(stopBlock.stop_order)}
                                         onChange={(e) => handleStopChange(index, 'stop_order', Number(e.target.value))}
                                     />
 
+                                    <label htmlFor={`additional_price`}>Добавочная цена</label>
+
                                     <Input
                                         placeholder="Добавочная цена"
                                         type="number"
+                                        id="additional_price"
                                         value={String(stopBlock.additional_price)}
                                         onChange={(e) => handleStopChange(index, 'additional_price', Number(e.target.value))}
                                     />

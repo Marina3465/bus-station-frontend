@@ -31,7 +31,13 @@ interface IRoutesStops {
     standard_price: number,
     stops_list: string
 }
-
+interface IStop {
+    stop_id: number,
+    stop_order: number,
+    additional_price: number,
+    departure: string,
+    arrival: string
+}
 interface ITickets {
     id_ticket: number
     id_route: number
@@ -150,6 +156,29 @@ export const api = createApi({
         getRoutesStops: builder.query<IRoutesStops[], void>({
             query: () => 'routes-stops'
         }),
+        // добавление маршрута
+        addRoute: builder.mutation<void, { name: string, bus_id: number, standard_price: number }>({
+            query: (route) => ({
+                url: 'addRoute',
+                method: 'POST',
+                body: route,
+            }),
+        }),
+        // добавление остановок на маршрут
+        addRouteStops: builder.mutation<void, { route_id: number; stops: IStop[] }>({
+            query: (route) => ({
+                url: 'addRouteStops',
+                method: 'POST',
+                body: route,
+            }),
+        }),
+        //удаление маршрута
+        deleteRoutes: builder.mutation<void, { id_route: number }>({
+            query: (route) => ({
+                url: `deleteRoutes/${route.id_route}`,
+                method: 'DELETE',
+            }),
+        }),
         //получение билетов
         getTickets: builder.query<ITickets[], void>({
             query: () => 'tickets'
@@ -160,5 +189,5 @@ export const api = createApi({
 export const { useLazyGetRoutesQuery, useAddTicketMutation, useLazyGetDriversQuery, useAddDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation,
     useLazyGetStopsQuery, useAddStopMutation, useUpdateStopMutation, useDeleteStopMutation,
     useLazyGetBusesQuery, useAddBusMutation, useUpdateBusMutation, useDeleteBusMutation,
-    useLazyGetRoutesStopsQuery,
+    useLazyGetRoutesStopsQuery, useAddRouteMutation, useAddRouteStopsMutation, useDeleteRoutesMutation,
     useLazyGetTicketsQuery } = api;
