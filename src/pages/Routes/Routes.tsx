@@ -6,8 +6,12 @@ import Modal from "../../components/Modal/Modal";
 import Input from "../../components/Input/Input";
 import Success from "../../components/Success/Success";
 import Error from "../Error/Error";
-import { useAddRouteMutation, useAddRouteStopsMutation, useDeleteRoutesMutation, useLazyGetBusesQuery, useLazyGetRoutesStopsQuery, useLazyGetStopsQuery } from "../../store/api/api";
+import { useAddRouteMutation, useAddRouteStopsMutation, useDeleteRoutesMutation, useLazyGetBusesQuery, useLazyGetRoutesStopsQuery, useLazyGetStopReportQuery, useLazyGetStopsQuery } from "../../store/api/api";
 import st from './Routes.module.css';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { r } from "../../fonts/roboto";
+import { format } from "date-fns/format";
 
 interface RoutesProps {
 
@@ -25,6 +29,9 @@ const Routes: FC<RoutesProps> = () => {
     const [getRoutes, { data: routesData, error, isLoading: isLoadingStops }] = useLazyGetRoutesStopsQuery();
     const [getBuses, { data: busesData }] = useLazyGetBusesQuery();
     const [getStops, { data: stopsData }] = useLazyGetStopsQuery();
+    const [getStopReport, { data: stopReportData }] = useLazyGetStopReportQuery();
+    const [isGenerating, setIsGenerating] = useState(false);
+
     const [addRoute] = useAddRouteMutation();
     const [addRouteStops] = useAddRouteStopsMutation();
 
@@ -47,6 +54,7 @@ const Routes: FC<RoutesProps> = () => {
             getRoutes();
             getBuses();
             getStops();
+            getStopReport();
         } catch (error) {
             console.error("Ошибка при получении маршрутов:", error);
             setMessageErr('Ошибка при получении маршрутов.');
@@ -66,16 +74,16 @@ const Routes: FC<RoutesProps> = () => {
     console.log(stops);
 
     const checkStops = () => {
-        return stops.every(r => 
-            r.stop_id !== -1 && 
-            r.additional_price != null && 
-            r.arrival !== "" && 
-            r.departure !== "" && 
-            r.stop_order != null 
+        return stops.every(r =>
+            r.stop_id !== -1 &&
+            r.additional_price != null &&
+            r.arrival !== "" &&
+            r.departure !== "" &&
+            r.stop_order != null
         );
     };
-    
-    
+
+
     const save = () => {
         if (nameRoute !== '' && price && bus && checkStops()) {
 
@@ -116,9 +124,57 @@ const Routes: FC<RoutesProps> = () => {
         }
     }
 
+    const exportPDF = () => {
+        setIsGenerating(true);
+
+        const doc = new jsPDF();
+
+        // Добавьте шрифт в jsPDF
+        doc.addFileToVFS("Roboto-Regular.ttf", r);
+        doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+        doc.setFont("Roboto");
+
+        // Заголовок
+        doc.text(`Маршруты`, 10, 10);
+
+        const tableHeaders = [
+            "Название Маршрута",
+            "Стандартная Цена",
+            "Название Остановки",
+            "Дополнительная Цена",
+            "Отправление",
+            "Прибытие"
+        ];
+        if (stopReportData) {
+            // Генерация строк таблицы на основе данных stopReportData
+            const tableRows = stopReportData.map(route => [
+                route.route_name,
+                route.standard_price,
+                route.stop_name,
+                route.additional_price,
+                format(new Date(route.departure), 'dd.MM.yyyy HH:mm'),
+                format(new Date(route.arrival), 'dd.MM.yyyy HH:mm')
+            ]);
+
+            autoTable(doc, {
+                head: [tableHeaders],
+                body: tableRows,
+                styles: { font: "Roboto" }
+            });
+        }
+
+        doc.save("routes.pdf");
+        setIsGenerating(false);
+    }
+
     return (
         <>
             <Header />
+            <div style={{ margin: '20px 50px' }}>
+                <Button onClick={exportPDF} disabled={isGenerating}>
+                    {isGenerating ? 'Генерация...' : 'Скачать информацию о маршрутах и остановках'}
+                </Button>
+            </div>
             <div className='btn-add'>
                 <Button onClick={() => setOpenAdd(true)}>Добавить маршрут</Button>
             </div>

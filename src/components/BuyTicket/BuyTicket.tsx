@@ -7,6 +7,9 @@ import Success from "../Success/Success";
 import { useAddTicketMutation } from "../../store/api/api";
 import Loading from "../Loading/Loading";
 import Error from "../../pages/Error/Error";
+import autoTable from "jspdf-autotable";
+import jsPDF from "jspdf";
+import { r } from "../../fonts/roboto";
 
 interface BuyTicketProps {
     data: IRoutes
@@ -17,6 +20,7 @@ const BuyTicket: FC<BuyTicketProps> = (props) => {
     const [cash, setCash] = useState<boolean>(false);
     const [err, setErr] = useState<boolean>(false);
     const [messageErr, setMessageErr] = useState<string>('');
+    const [isGenerating, setIsGenerating] = useState(false);
 
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +37,7 @@ const BuyTicket: FC<BuyTicketProps> = (props) => {
             price: hasBaggage ? props.data.total_price + 100 : props.data.total_price,
             purchase_date: format(new Date(), 'yyyy-MM-dd HH:mm:SS'),
             baggage: hasBaggage
-        }).unwrap(); 
+        }).unwrap().then(()=>setCash(true));
 
     };
 
@@ -44,6 +48,36 @@ const BuyTicket: FC<BuyTicketProps> = (props) => {
             setErr(true);
         }
     }, [error]);
+
+    const exportPDF = () => {
+        setIsGenerating(true);
+
+        const doc = new jsPDF();
+
+        // Добавьте шрифт в jsPDF
+        doc.addFileToVFS("Roboto-Regular.ttf", r);
+        doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+        doc.setFont("Roboto");
+
+        // Заголовок
+        doc.text(`Рейс №${props.data.route_id} ${props.data.route_name}`, 10, 10);
+
+        // Данные таблицы
+        const tableRows =  [
+            ["ОТ", `${props.data.start_stop_name}`, `${format(props.data.arrival, 'dd.MM.yyyy HH:mm')}`],
+            ["ДО", `${props.data.end_stop_name}`, `${format(props.data.departure, 'dd.MM.yyyy HH:mm')}`],
+        ];
+
+        autoTable(doc, {
+            body: tableRows,
+            styles: { font: "Roboto" },
+        });
+        doc.text(`Багаж ${hasBaggage ? 'Да' : 'Нет'}`, 10, 50);
+        doc.text(`Стоимость ${props.data.total_price} руб.`, 10, 60);
+
+        doc.save("ticket.pdf");
+        setIsGenerating(false);
+    }
 
     return (
         <>
@@ -76,7 +110,12 @@ const BuyTicket: FC<BuyTicketProps> = (props) => {
                 </div>
             </div>
             {cash &&
-                <Success onClick={() => setCash(false)} />
+                <Success onClick={() => setCash(false)}>
+                    <div style={{marginTop: '20px'}}></div>
+                    <Button onClick={exportPDF} disabled={isGenerating}>
+                        {isGenerating ? 'Генерация...' : 'Скачать билет'}
+                    </Button>
+                </Success>
             }
             {isLoading &&
                 <Loading />

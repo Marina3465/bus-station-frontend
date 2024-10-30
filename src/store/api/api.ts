@@ -51,6 +51,16 @@ interface ITickets {
     purchase_date: string
     baggage: boolean
 }
+export interface IStopReport {
+    id_stop_route: number,
+    stop_name: string,
+    route_name: string,
+    standard_price: string,
+    stop_order: number,
+    additional_price: number,
+    departure: string,
+    arrival: string
+}
 
 export const api = createApi({
     reducerPath: 'api',
@@ -183,6 +193,10 @@ export const api = createApi({
         getTickets: builder.query<ITickets[], void>({
             query: () => 'tickets'
         }),
+        //получение маршрутов для отчета
+        getStopReport: builder.query<IStopReport[], void>({
+            query: () => 'stop-report'
+        }),
     }),
 });
 
@@ -190,4 +204,4 @@ export const { useLazyGetRoutesQuery, useAddTicketMutation, useLazyGetDriversQue
     useLazyGetStopsQuery, useAddStopMutation, useUpdateStopMutation, useDeleteStopMutation,
     useLazyGetBusesQuery, useAddBusMutation, useUpdateBusMutation, useDeleteBusMutation,
     useLazyGetRoutesStopsQuery, useAddRouteMutation, useAddRouteStopsMutation, useDeleteRoutesMutation,
-    useLazyGetTicketsQuery } = api;
+    useLazyGetTicketsQuery, useLazyGetStopReportQuery } = api;

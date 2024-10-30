@@ -79,10 +79,10 @@ const Schedule: FC<ScheduleProps> = () => {
             setErr(true);
         }
     }
-    const sampleData: ReportData[] = [
-        { id: 1, name: 'Иван Иванов', info: 'Пример данных 1' },
-        { id: 2, name: 'Петр Петров', info: 'Пример данных 2' },
-    ];
+    // const sampleData: ReportData[] = [
+    //     { id: 1, name: 'Иван Иванов', info: 'Пример данных 1' },
+    //     { id: 2, name: 'Петр Петров', info: 'Пример данных 2' },
+    // ];
     return (
         <>
             <Header />
@@ -108,7 +108,7 @@ const Schedule: FC<ScheduleProps> = () => {
             )}
 
 
-            <Report data={sampleData} />;
+            {/* <Report data={sampleData} />; */}
             {isLoading &&
                 <Loading />
             }
