@@ -68,10 +68,10 @@ const Routes: FC<RoutesProps> = () => {
     const checkStops = () => {
         return stops.every(r => 
             r.stop_id !== -1 && 
-            r.additional_price != null && // допускает значение 0
+            r.additional_price != null && 
             r.arrival !== "" && 
             r.departure !== "" && 
-            r.stop_order != null // учитывает 0 как допустимое значение
+            r.stop_order != null 
         );
     };
     
