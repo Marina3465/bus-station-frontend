@@ -64,8 +64,8 @@ const BuyTicket: FC<BuyTicketProps> = (props) => {
 
         // Данные таблицы
         const tableRows =  [
-            ["ОТ", `${props.data.start_stop_name}`, `${format(props.data.arrival, 'dd.MM.yyyy HH:mm')}`],
-            ["ДО", `${props.data.end_stop_name}`, `${format(props.data.departure, 'dd.MM.yyyy HH:mm')}`],
+            ["ОТ", `${props.data.start_stop_name}`, `${format(props.data.departure, 'dd.MM.yyyy HH:mm')}`],
+            ["ДО", `${props.data.end_stop_name}`, `${format(props.data.arrival, 'dd.MM.yyyy HH:mm')}`],
         ];
 
         autoTable(doc, {

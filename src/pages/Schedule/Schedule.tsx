@@ -11,7 +11,6 @@ import { SerializedError } from "@reduxjs/toolkit/react";
 import Module from "../../components/Modal/Modal";
 import BuyTicket from "../../components/BuyTicket/BuyTicket";
 import Header from "../../components/Header/Header";
-import Report, { ReportData } from "../../components/Reports/Report";
 
 interface ScheduleProps {
 
@@ -79,10 +78,7 @@ const Schedule: FC<ScheduleProps> = () => {
             setErr(true);
         }
     }
-    // const sampleData: ReportData[] = [
-    //     { id: 1, name: 'Иван Иванов', info: 'Пример данных 1' },
-    //     { id: 2, name: 'Петр Петров', info: 'Пример данных 2' },
-    // ];
+
     return (
         <>
             <Header />
@@ -108,7 +104,6 @@ const Schedule: FC<ScheduleProps> = () => {
             )}
 
 
-            {/* <Report data={sampleData} />; */}
             {isLoading &&
                 <Loading />
             }
